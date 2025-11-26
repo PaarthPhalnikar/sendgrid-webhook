@@ -41,8 +41,22 @@ def send_reply_email(to_email, subject, body):
         html_content=f"<p>{body}</p>"
     )
 
-    sg = SendGridAPIClient(SENDGRID_API_KEY)
-    sg.send(message)
+    try:
+        sg = SendGridAPIClient(SENDGRID_API_KEY)
+        response = sg.send(message)
+        # Log response for debugging
+        print("✅ SendGrid status:", response.status_code)
+        print("✅ SendGrid body:", response.body)
+        print("✅ SendGrid headers:", response.headers)
+    except Exception as e:
+        # This will show the actual JSON error SendGrid returns
+        print("❌ SendGrid error object:", repr(e))
+        try:
+            print("❌ SendGrid error body:", e.body)
+        except AttributeError:
+            pass
+        raise
+
 
 
 # ---------- Inbound Webhook ----------
